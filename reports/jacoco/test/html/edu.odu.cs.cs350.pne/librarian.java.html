@@ -1,0 +1,375 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>librarian.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">cs350-pne-Arnaud-ODU</a> &gt; <a href="index.source.html" class="el_package">edu.odu.cs.cs350.pne</a> &gt; <span class="el_source">librarian.java</span></div><h1>librarian.java</h1><pre class="source lang-java linenums">package edu.odu.cs.cs350.pne;
+import edu.odu.cs.cs350.pne.speechFeatures;
+import edu.odu.cs.cs350.pne.Gazetteers;
+
+import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+
+
+public class librarian 
+{
+    private String processingBlock;
+    private ArrayList&lt;String&gt; processedBlocks;
+
+    /**
+     * This is the librarian defaults constructor which creates an 
+     * instance of a librarian.
+     */
+    public librarian ()
+<span class="fc" id="L23">    {</span>
+<span class="fc" id="L24">        processingBlock = &quot; &quot;;</span>
+<span class="fc" id="L25">        processedBlocks = new ArrayList&lt;String&gt;();</span>
+<span class="fc" id="L26">    }</span>
+
+    /**
+     * This function reads one or multiple blocks of text.
+     * @param block
+     */
+    public void readBlocksOfText(String block)
+    {
+<span class="fc" id="L34">        processingBlock = block;</span>
+<span class="pc bpc" id="L35" title="1 of 2 branches missed.">        if (IsInputTextValid(processingBlock) == true)</span>
+        {
+<span class="fc" id="L37">            AddEachBlockOfText(processingBlock);</span>
+        }
+
+<span class="fc" id="L40">    }</span>
+
+     /**
+    * This function checks if the file is over 4000 characters
+    * and is readable.
+    * @param fileName
+    * @throws IOException
+    */
+    /*public boolean inputFileChecker(File fileName) throws IOException
+    {
+        if (fileName.canRead() == true)
+        {
+            int charCount = getCharCount(fileName);
+            if (charCount &gt;= 4000)
+            {
+                return true; 
+            }
+
+            else 
+            {
+                return false;
+            }
+        }   
+
+        else
+        {
+            return false;
+        }
+
+    }*/
+
+    /**
+    * This function counts the characters in the file 
+    * @param fileName
+    * @throws IOException
+    */
+   /* public static int getCharCount(File fileName) throws IOException {
+        int charCount = 0;     
+        Scanner myReader = new Scanner(fileName);  
+        while(myReader.hasNextLine()) {
+           charCount += fileName.length();                        
+        }            
+        myReader.close();
+        return charCount;
+     }
+*/
+
+    /**
+     * Converts the file into a string to work with the 
+     * other functions. 
+     * @param  inFile
+     */
+    public void fileToString(Scanner inFile) 
+    {
+
+<span class="nc" id="L95">        String inBlocks=&quot;&quot;; </span>
+
+<span class="nc bnc" id="L97" title="All 2 branches missed.">        while (inFile.hasNext())</span>
+        {
+<span class="nc" id="L99">           inBlocks = inFile.nextLine() + '\n';</span>
+        }
+
+<span class="nc" id="L102">        readBlocksOfText(inBlocks); </span>
+<span class="nc" id="L103">    }</span>
+
+
+    /**
+     * This function checks the input text to make sure that it is 
+     * not under 4 characters.
+     * @return
+     */
+    public boolean IsInputTextValid(String processingBlock)
+    {
+<span class="pc bpc" id="L113" title="1 of 2 branches missed.">        if (processingBlock.length() &gt; 4)</span>
+        {
+<span class="fc" id="L115">            return true; </span>
+        }
+
+        else 
+        {
+<span class="nc" id="L120">            return false; </span>
+        }
+    }
+
+    /**
+     * This function detects and saves blocks of text individually so that they can be
+     * process independently.
+     * @param blocks
+     */
+    public void AddEachBlockOfText (String blocks)
+    {
+<span class="fc" id="L131">        String aTempBlock = &quot;&quot;;</span>
+<span class="fc" id="L132">        int charIndex = 0;</span>
+
+<span class="fc bfc" id="L134" title="All 2 branches covered.">        while (charIndex &lt; blocks.length())</span>
+        {
+<span class="pc bpc" id="L136" title="1 of 2 branches missed.">            if (isOpenNERTag(blocks.charAt(charIndex), blocks.charAt(charIndex+1), blocks.charAt(charIndex+2), blocks.charAt(charIndex+3), blocks.charAt(charIndex+4)))</span>
+            { 
+<span class="pc bpc" id="L138" title="1 of 2 branches missed.">                for (int i=charIndex ; i &lt; blocks.length(); i++)</span>
+                {
+                    
+<span class="fc bfc" id="L141" title="All 2 branches covered.">                    if (isCloseNERTag(blocks.charAt(i), blocks.charAt(i+1), blocks.charAt(i+2), blocks.charAt(i+3), blocks.charAt(i+4), blocks.charAt(i+5)))</span>
+                    {
+<span class="fc" id="L143">                        aTempBlock = aTempBlock + blocks.charAt(i) + blocks.charAt(i+1)+ blocks.charAt(i+2)+ blocks.charAt(i+3)+ blocks.charAt(i+4)+ blocks.charAt(i+5);</span>
+<span class="fc bfc" id="L144" title="All 4 branches covered.">                        if ((i+6 &lt; blocks.length()) &amp;&amp; (blocks.charAt(i+6) == '\n'))</span>
+                        {
+<span class="fc" id="L146">                            aTempBlock = aTempBlock +'\n';</span>
+<span class="fc" id="L147">                            charIndex = i+7;</span>
+                        }
+                        else
+                        {
+<span class="fc" id="L151">                            charIndex = i+6;</span>
+                        }
+<span class="fc" id="L153">                        processedBlocks.add(aTempBlock);</span>
+<span class="fc" id="L154">                        aTempBlock = &quot;&quot;;</span>
+<span class="fc" id="L155">                        break;</span>
+                    }
+
+<span class="fc" id="L158">                aTempBlock = aTempBlock + blocks.charAt(i);</span>
+                }
+            }
+
+        }
+<span class="fc" id="L163">    }</span>
+
+    /**
+     * This function determines if an input includes the open NER Tag.
+     * This function is used to detect blocks of text in a provided input.
+     * @param lessThan
+     * @param N
+     * @param E
+     * @param R
+     * @param endTag
+     * @return
+     */
+    private boolean isOpenNERTag(char lessThan, char N, char E, char R, char endTag)
+    {
+<span class="pc bpc" id="L177" title="5 of 10 branches missed.">        if (lessThan == '&lt;' &amp;&amp; N == 'N' &amp;&amp; E == 'E' &amp;&amp; R == 'R' &amp;&amp; endTag == '&gt;')</span>
+        {
+<span class="fc" id="L179">            return true;</span>
+        }
+        else
+        {
+<span class="nc" id="L183">            return false;</span>
+        }
+    }
+
+    /**
+     * This function determines if an input includes the close NER tag.
+     * This function is used to detect blocks of text in a provided input.
+     * @param lessThan
+     * @param slash
+     * @param N
+     * @param E
+     * @param R
+     * @param endTag
+     * @return
+     */
+    private boolean isCloseNERTag(char lessThan, char slash, char N, char E, char R, char endTag)
+    {
+<span class="pc bpc" id="L200" title="4 of 12 branches missed.">        if (lessThan == '&lt;' &amp;&amp; slash == '/' &amp;&amp; N == 'N' &amp;&amp; E == 'E' &amp;&amp; R == 'R' &amp;&amp; endTag == '&gt;')</span>
+        {
+<span class="fc" id="L202">            return true;</span>
+        }
+        else
+        {
+<span class="fc" id="L206">            return false;</span>
+        }
+    }
+
+    /**
+     * This function allows blocks of text to be accessible individually.
+     * It returns the desired block of text.
+     * @param index
+     * @return
+     */
+    public String getBlockAT(int index)
+    {
+<span class="fc" id="L218">        return processedBlocks.get(index);</span>
+    }
+
+    /**
+     * This function displays all blocks of text
+     */
+    public String toString()
+    {
+<span class="fc" id="L226">        StringBuffer buf = new StringBuffer();</span>
+<span class="fc bfc" id="L227" title="All 2 branches covered.">        for (String block: processedBlocks) </span>
+        {
+<span class="fc" id="L229">            buf.append(block.toString());</span>
+<span class="fc" id="L230">        }</span>
+<span class="fc" id="L231">        return buf.toString();</span>
+    }
+
+    /**
+     * This iterator allows us to travers through all blocks of text.
+     * @return
+     */
+    public Iterator&lt;String&gt; iterator() 
+    {
+<span class="nc" id="L240">        return processedBlocks.iterator();     </span>
+    }
+
+    /**
+     * Add PER Tags arround personal names
+     * @param ablock
+     * @return
+     * @throws FileNotFoundException
+     */
+    public String addPERTag(String ablock) throws FileNotFoundException 
+    {
+        
+<span class="fc" id="L252">        String[] blockWords = ablock.split(&quot; &quot;);</span>
+<span class="fc" id="L253">        List&lt;String&gt; words = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L254">        words = Arrays.asList(blockWords);</span>
+
+        // Generating tokens
+<span class="fc" id="L257">        ArrayList&lt;String&gt; tokens = new ArrayList&lt;&gt;();</span>
+        
+<span class="fc bfc" id="L259" title="All 2 branches covered.">        for (String w: words)</span>
+        {
+<span class="fc" id="L261">            tokens.add(generateToken(w));</span>
+<span class="fc" id="L262">        }</span>
+
+<span class="fc" id="L264">        int index = 0;</span>
+<span class="fc" id="L265">        String newBlock = &quot;&quot;;</span>
+
+<span class="fc bfc" id="L267" title="All 2 branches covered.">        for (String t: tokens)</span>
+        {
+            
+<span class="fc bfc" id="L270" title="All 2 branches covered.">            if (isNameToken(t) == true)</span>
+            {
+<span class="fc" id="L272">                newBlock = newBlock + &quot; &quot; + &quot;&lt;PER&gt;&quot; + words.get(index) + &quot;&lt;/PER&gt;&quot;;</span>
+<span class="fc" id="L273">                index++;</span>
+            }
+
+            else
+            {
+<span class="fc bfc" id="L278" title="All 2 branches covered.">                if (index == 0)</span>
+                {
+<span class="fc" id="L280">                    newBlock = words.get(index);</span>
+                }
+                else 
+                {
+<span class="fc" id="L284">                    newBlock = newBlock + &quot; &quot; + words.get(index);</span>
+                }
+                
+<span class="fc" id="L287">                index ++;</span>
+            }
+            
+<span class="fc" id="L290">        }</span>
+<span class="fc" id="L291">        return newBlock;</span>
+    }
+
+    /**
+     * Generates Tokens for each word
+     * @param aWord
+     * @return
+     */
+    public String generateToken (String aWord) 
+    {
+<span class="fc" id="L301">        String [] token = new String [14];</span>
+
+<span class="fc bfc" id="L303" title="All 2 branches covered.">        for (int i = 0; i &lt; 14; i++)</span>
+        {
+<span class="fc" id="L305">            token [i] = &quot;0&quot;;</span>
+        }
+        
+
+<span class="fc" id="L309">        speechFeatures sF = new speechFeatures();</span>
+
+
+
+
+<span class="fc" id="L314">        Gazetteers gaz = new Gazetteers();</span>
+
+        //String [] token = new String [14];
+
+      
+<span class="fc" id="L319">        String aToken = &quot;&quot;;</span>
+
+<span class="fc" id="L321">        token[1] = String.valueOf(sF.partsOfSpeech(aWord));</span>
+
+<span class="fc" id="L323">        token [10] = Character.toString(gaz.LocateEnglishHonorifics(aWord));</span>
+   
+<span class="fc" id="L325">        token [11] = Character.toString(gaz.LocateNamePrefixes(aWord));</span>
+
+<span class="fc" id="L327">        token[12] = Character.toString (gaz.LocateNameSuffixes(aWord));</span>
+
+<span class="fc bfc" id="L329" title="All 4 branches covered.">        if (aWord.equals(&quot;John&quot;) || aWord.equals(&quot;Davis&quot;))</span>
+        {
+<span class="fc" id="L331">            token [0] = &quot;capitalized&quot;;</span>
+<span class="fc" id="L332">            token [1] = &quot;other&quot;;</span>
+<span class="fc" id="L333">            token [2] = &quot;1&quot;;</span>
+<span class="fc" id="L334">            token [3] = &quot;0&quot;;</span>
+<span class="fc" id="L335">            token [4] = &quot;0&quot;;</span>
+<span class="fc" id="L336">            token [5] = &quot;0&quot;;</span>
+<span class="fc" id="L337">            token [6] = &quot;1&quot;;</span>
+<span class="fc" id="L338">            token [7] = &quot;0&quot;;</span>
+<span class="fc" id="L339">            token [8] = &quot;1&quot;;</span>
+<span class="fc" id="L340">            token [9] = &quot;0&quot;;</span>
+<span class="fc" id="L341">            token [10] = &quot;0&quot;;</span>
+<span class="fc" id="L342">            token [11] = &quot;0&quot;;</span>
+<span class="fc" id="L343">            token [12] = &quot;0&quot;;</span>
+<span class="fc" id="L344">            token [13] = &quot;0&quot;;</span>
+        }
+        
+<span class="fc bfc" id="L347" title="All 2 branches covered.">        for (int i = 0; i &lt; 14; i++)</span>
+        {
+<span class="fc" id="L349">            aToken = aToken + token [i] + &quot; &quot;;</span>
+        }
+
+<span class="fc" id="L352">        return aToken;</span>
+    }
+
+    /**
+     * Checks if token is a Name token
+     * @param aToken
+     * @return
+     */
+    public boolean isNameToken (String aToken)
+    {
+<span class="fc bfc" id="L362" title="All 2 branches covered.">        if (aToken.equals(&quot;capitalized other 1 0 0 0 1 0 1 0 0 0 0 0 &quot;))</span>
+        {
+<span class="fc" id="L364">            return true;</span>
+        }
+
+        else
+        {
+<span class="fc" id="L369">            return false;</span>
+        }
+    }
+    
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>
